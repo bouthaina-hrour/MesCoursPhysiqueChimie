@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <title>MesCoursPhysiqueChimie</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="head.js"></script>
+  </head>
+  <style>
+    /* Centrer #ruffle */
+    #ruffle {
+      display: flex;
+      justify-content: center; /* Centre horizontalement */
+      align-items: center;    /* Centre verticalement *            /* Largeur de la page */
+      margin: 50px auto;   
+      width: 800px; /* ou un pourcentage comme 80vw */
+      height: 600px;      /* Centrage automatique */
+    }
+
+    .menu {
+    max-width: 600px; /* Limite la largeur du menu pour qu'il ne soit pas trop large */
+    margin: 50px auto; /* Centre le menu horizontalement et ajoute un peu de marge en haut */
+    padding: 20px;
+    background-color: #f7f7f7; /* Fond clair pour un look épuré */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce pour un effet flottant */
+    text-align: center; /* Centrer le texte à l'intérieur des labels */
+  }
+
+  /* Style des labels */
+  .menu label {
+    display: block;
+    font-size: 16px;
+    color: #333; /* Couleur foncée pour le texte */
+    margin-bottom: 10px;
+    margin-top: 10px; /* Un peu d'espace entre le label et le sélecteur */
+    font-weight: bold; /* Mettre les labels en gras */
+  }
+
+  /* Style des menus déroulants (select) */
+  .menu select {
+    width: 100%; /* Prend toute la largeur du conteneur */
+    padding: 10px;
+    font-size: 16px;
+    color: #555; /* Couleur claire pour le texte */
+    background-color: #fff; /* Fond blanc */
+    border: 1px solid #ccc; /* Bordure légère */
+    border-radius: 5px; /* Coins arrondis */
+    appearance: none; /* Supprime les styles par défaut du navigateur */
+    outline: none; /* Supprime le contour au focus */
+    transition: all 0.3s ease; /* Transition douce pour les effets */
+  }
+
+  /* Effet au survol des sélecteurs */
+  .menu select:hover {
+    border-color: #007BFF; /* Changer la couleur de bordure au survol */
+    cursor: pointer; /* Montre une main pour l'interaction */
+  }
+
+  /* Style pour le bouton ou le sélecteur désactivé (quand aucune option n'est choisie) */
+  .menu select:disabled {
+    background-color: #f0f0f0; /* Fond gris clair pour indiquer qu'il est désactivé */
+    color: #aaa; /* Texte gris pour indiquer qu'il est désactivé */
+  }
+  </style>
+  <body>
+    <div id="marges">
+      <a id="top"> </a>
+      <!-- Bandeau supérieur -->
+      <div id="bandeau">
+        <img src="../atome.webp" width="120" height="120" alt="">
+        <span id="tfontanet">Nidal NACEIRI MRABTI</span>
+        <br><br>
+        <div id="menu">
+          <a href="../index.html" class="maths">Accueil</a>
+          <a href="../tc/index.html" class="maths">Tronc commun</a>
+          <a href="../1bac/index.html" class="maths">1ère année bac</a>
+          <a href="../2bac/index.html" class="maths">2éme année bac</a>
+          <a href="index.html" class="maths selected">Simulations</a>
+        </div>
+      </div>
+      <!-- Début de la page -->
+      <div id="contenu">
+        <div id="debutpage">
+            <div class="menu">
+                <!-- Liste déroulante pour sélectionner un dossier -->
+                <label for="dossierSelect">Choisir un cours :</label>
+                <select id="dossierSelect" onchange="updateFileList(this.value)">
+                    <option value="">-- Sélectionner un cours--</option>
+                </select>
+    
+                <!-- Liste déroulante pour sélectionner un fichier SWF -->
+                <label for="fileSelect">Choisir une simulation:</label>
+                <select id="fileSelect" onchange="loadRufflePlayer(this.value)" disabled>
+                    <option value="">-- Sélectionner une simulation --</option>
+                </select>
+            </div>
+            <div id="ruffle">
+                <!-- Le lecteur Ruffle sera injecté ici -->
+            </div>
+    
+            <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+            <script>
+                // Données des dossiers et fichiers SWF
+                const data = {
+  
+                    Champ_magnétique: ["1.swf", "2.swf", "3.swf", "4.swf", "5.swf", "6.swf","7.swf"],
+                    Champ_magnétique_créé_par_un_courant_électrique: ["1.swf", "2.swf", "3.swf"],
+                    Comportement_global_circuit_électrique: ["1.swf", "2.swf", "3.swf"],
+                    Energie_potentielle_électrostatique:["Epe1.swf"],
+                    Forces_électromagnétiques_loi_de_Laplace:["1.swf", "2.swf", "3.swf", "4.swf","loi.swf","haut_parleur.swf","Movie1.swf"],
+                    Transfert_énergie_dans_un_circuit_électrique:["trans.swf"]
+                };
+    
+                // Fonction pour charger les options des dossiers
+                function loadDossiers() {
+                    const dossierSelect = document.getElementById("dossierSelect");
+                    for (let dossier in data) {
+                        const option = document.createElement("option");
+                        option.value = dossier;
+                        option.textContent = dossier;
+                        dossierSelect.appendChild(option);
+                    }
+                }
+    
+                // Fonction pour mettre à jour la liste des fichiers
+                function updateFileList(dossier) {
+                    const fileSelect = document.getElementById("fileSelect");
+                    const ruffleContainer = document.getElementById("ruffle");
+    
+                    // Réinitialise la liste déroulante et le lecteur
+                    fileSelect.innerHTML = "<option value=''>-- Sélectionner une simulation  --</option>";
+                    fileSelect.disabled = true;
+                    ruffleContainer.innerHTML = "";
+    
+                    if (!dossier || !data[dossier]) return;
+    
+                    // Ajouter les fichiers du dossier sélectionné
+                    data[dossier].forEach(file => {
+                        const option = document.createElement("option");
+                        option.value = `${dossier}/${file}`; // Chemin relatif
+                        option.textContent = file;
+                        fileSelect.appendChild(option);
+                    });
+    
+                    fileSelect.disabled = false;
+                }
+    
+                // Fonction pour charger un fichier SWF avec Ruffle
+                function loadRufflePlayer(filePath) {
+                    const ruffleContainer = document.getElementById("ruffle");
+                    ruffleContainer.innerHTML = ""; // Efface l'ancien contenu
+    
+                    if (!filePath) return;
+    
+                    // Crée un lecteur Ruffle
+                    window.RufflePlayer = window.RufflePlayer || {};
+                    const ruffle = window.RufflePlayer.newest();
+                    const player = ruffle.createPlayer();
+
+                    player.style.width = "100%"; // Adapte à la largeur du conteneur
+                    player.style.height = "100%";
+
+                    ruffleContainer.appendChild(player);
+    
+                    // Charge le fichier SWF sélectionné
+                    player.load(filePath);
+                }
+    
+                // Charger les dossiers au démarrage
+                loadDossiers();
+            </script>
+        </div>
+    </div>
+  </body>
+</html>
+

@@ -36,6 +36,17 @@ input.texte {text-align: center}
 #debutpageimg {float:left; width:208px; height:175px}
 #debutpageimg1 {float:right; width:208px; height:175px}
 #debutpagecontenu {margin-left: 248px}
+.menu {
+  margin-bottom: 20px;
+}
+.menu select {
+  margin-right: 10px;
+  padding: 5px;
+  font-size: 16px;
+}
+#ruffle {
+  margin: auto;
+}
 @media screen and (max-width: 600px) {
   #debutpage {min-height: auto}
   #debutpageimg {display: none}
